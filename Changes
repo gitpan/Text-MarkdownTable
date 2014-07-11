@@ -1,3 +1,5 @@
-0.2.0  2014-07-10 23:10:26 CEST
-- inital release, based on Catmandu::Exporter::Table 0.1.2
+0.2.1  2014-07-11 10:14:33 CEST
+    - implemented condense and unbuffered writing 
 
+0.2.0   2014-07-10
+    - inital release, based on Catmandu::Exporter::Table 0.1.2

@@ -3,13 +3,13 @@ NAME
 
 SYNOPSIS
       my $table = Text::MarkdownTable->new;
-      $table->add_row({one=>"my",two=>"table"});
-      $table->add_row({one=>"is",two=>"nice"});
+      $table->add({one=>"a",two=>"table"});
+      $table->add({one=>"is",two=>"nice"});
       $table->done;
 
       | one | two   |
       |-----|-------|
-      | my  | table |
+      | a   | table |
       | is  | nice  |
 
 DESCRIPTION
@@ -20,6 +20,10 @@ DESCRIPTION
     cell values can be truncated.
 
 CONFIGURATION
+    file
+        Filename, GLOB, scalar reference or IO::Handle to write to (default
+        STDOUT).
+
     fields
         Array, hash reference, or comma-separated list of fields/columns.
 
@@ -28,8 +32,17 @@ CONFIGURATION
 
     widths
         Column widths. By default column widths are calculated automatically
-        to the width of the widest value. With custom width, large values
-        may be truncated.
+        to the width of the widest value. With given widths, the table is
+        directly be written without buffering and large table cell values
+        are truncated.
+
+    condense
+        Write table unbuffered in condense format:
+
+          one|two
+          ---|---
+          a|table
+          is|nice
 
 METHODS
     add Add a row as hash reference. Depending on the configuration rows are
@@ -39,7 +52,19 @@ METHODS
         Finish and write the table unless it has already been written.
 
 SEE ALSO
-    This module is a fork of Catmandu::Exporter::Table. See
-    Text::TabularDisplay, Text::SimpleTable, and Text::Table,
-    Text::ANSITable, and Text::ASCIITable for similar modules.
+    See Catmandu::Exporter::Table for an application of this module that can
+    be used to easily convert data to Markdown tables.
+
+    Similar table-generating modules include
+
+    Text::Table::Tiny
+    Text::TabularDisplay
+    Text::SimpleTable
+    Text::Table
+    Text::ANSITable
+    Text::ASCIITable
+    Text::UnicodeBox::Table
+    Table::Simple
+    Text::SimpleTable
+    Text::SimpleTable::AutoWidth
 
