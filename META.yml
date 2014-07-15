@@ -21,12 +21,13 @@ no_index:
     - eg
     - examples
 requires:
+  IO::Handle::Util: '0.01'
   Moo: '1.0'
   perl: v5.10.0
 resources:
   bugtracker: https://github.com/nichtich/Text-MarkdownTable/issues
   homepage: https://github.com/nichtich/Text-MarkdownTable
   repository: https://github.com/nichtich/Text-MarkdownTable.git
-version: 0.2.1
+version: 0.2.2
 x_contributors:
   - 'Jakob Voss <voss@gbv.de>'

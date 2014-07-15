@@ -9,5 +9,6 @@ README
 cpanfile
 dist.ini
 lib/Text/MarkdownTable.pm
+t/file.t
 t/release-pod-syntax.t
 t/simple.t
