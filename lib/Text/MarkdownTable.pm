@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.010;
 
-our $VERSION = '0.2.2';
+our $VERSION = '0.2.3';
 
 use Moo;
 
@@ -39,6 +39,7 @@ has fields => (
     trigger => 1,
 );
 
+# TODO: ensure that number of columns is number of fields
 has columns => (
     is      => 'lazy',
     coerce  => \&_coerce_list,
@@ -72,7 +73,7 @@ sub _trigger_fields {
     my ($self, $fields) = @_;
     $self->{fields} = _coerce_list($fields);
     if (ref $fields and ref $fields eq 'HASH') {
-        $self->{columns} = [ map { $fields->{$_} } @{$self->{fields}} ];
+        $self->{columns} = [ map { $fields->{$_} // $_ } @{$self->{fields}} ];
     }
 }
 
@@ -86,11 +87,7 @@ sub add {
     my $row = [ ];
 
     if (!$self->_streaming) {
-        if ($self->condense) {
-            $self->_streaming(1);
-            say {$self->fh} join '|', @{$self->columns};
-            say {$self->fh} join '|', map { '-' x length $_ } @{$self->columns};
-        } elsif($self->_fixed_width) {
+        if ($self->condense or $self->_fixed_width) {
             $self->_streaming(1);
             $self->_print_header;
         }
@@ -105,7 +102,7 @@ sub add {
 
         my $w = length $value;
         if ($self->_fixed_width) {
-            if ($w > $width) {
+            if (!$width or $w > $width) {
                 if ($width > 5) {
                     $value = substr($value, 0, $width-3) . '...';
                 } else {
@@ -113,7 +110,7 @@ sub add {
                 }
             }
         } else {
-            $widths->[$col] = $w if $w > $width;
+            $widths->[$col] = $w if !$width or $w > $width;
         }
         push @$row, $value;
     }
@@ -126,11 +123,7 @@ sub _add_row {
     my ($self, $row) = @_;
 
     if ($self->_streaming) {
-        if ($self->condense) {
-            say {$self->fh} join '|', @$row;
-        } else {
-            $self->_print_row($row);
-        }
+        $self->_print_row($row);
     } else {
         push @{$self->{_rows}}, $row;
     }
@@ -148,19 +141,28 @@ sub done {
 sub _print_header {
     my ($self) = @_;
     my $fh     = $self->fh;
+
     $self->_print_row($self->columns);
-    map { print $fh "|".('-' x ($_+2))} @{$self->widths};
-    say $fh "|";
+    if ($self->condense) {
+        $self->_print_row([ map { '-' x length $_ } @{$self->columns} ]);
+    } else {
+        print $fh '|'.('-' x ($_+2)) for @{$self->widths};
+        print $fh "|\n";
+    }
 }
+
+has _row_format => (
+    is      => 'lazy',
+    builder => sub { 
+        $_[0]->condense
+            ? join("|",map {"%s"} @{$_[0]->fields})."\n"
+            : join("",map {"| %-".$_."s "} @{$_[0]->widths})."|\n";
+    }
+);
 
 sub _print_row {
     my ($self, $row) = @_;
-    my $fh     = $self->fh;
-    my $widths = $self->widths;
-    foreach my $col (0..(@$widths-1)) {
-        printf $fh "| %-".$widths->[$col]."s ", $row->[$col];
-    }
-    say $fh "|";
+    printf {$self->fh} $self->_row_format, @{$row};
 }
 
 =head1 NAME
