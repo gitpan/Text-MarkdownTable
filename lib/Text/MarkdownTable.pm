@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.010;
 
-our $VERSION = '0.2.3';
+our $VERSION = '0.2.4';
 
 use Moo;
 
@@ -51,7 +51,7 @@ has widths => (
     coerce  => \&_coerce_list,
     builder => sub {
         $_[0]->_fixed_width(0);
-        return [map { length $_ } @{$_[0]->columns}]
+        return [map { defined($_) ? length $_ : 0 } @{$_[0]->columns}]
     },
 );
 
@@ -165,6 +165,9 @@ sub _print_row {
     printf {$self->fh} $self->_row_format, @{$row};
 }
 
+1;
+__END__
+
 =head1 NAME
 
 Text::MarkdownTable - Write Markdown syntax tables from data
@@ -242,7 +245,7 @@ Finish and write the table unless it has already been written.
 See L<Catmandu::Exporter::Table> for an application of this module that can be
 used to easily convert data to Markdown tables.
 
-Similar table-generating modules include
+Similar table-generating modules include:
 
 =over
 
@@ -268,6 +271,17 @@ Similar table-generating modules include
 
 =back
 
-=cut
+=encoding utf8
 
-1;
+=head1 AUTHOR
+
+Jakob Voß E<lt>jakob.voss@gbv.deE<gt>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2014- Jakob Voß
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

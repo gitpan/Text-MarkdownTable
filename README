@@ -55,7 +55,7 @@ SEE ALSO
     See Catmandu::Exporter::Table for an application of this module that can
     be used to easily convert data to Markdown tables.
 
-    Similar table-generating modules include
+    Similar table-generating modules include:
 
     Text::Table::Tiny
     Text::TabularDisplay
@@ -67,4 +67,13 @@ SEE ALSO
     Table::Simple
     Text::SimpleTable
     Text::SimpleTable::AutoWidth
+
+AUTHOR
+    Jakob Voß <jakob.voss@gbv.de>
+
+COPYRIGHT AND LICENSE
+    Copyright 2014- Jakob Voß
+
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
 
